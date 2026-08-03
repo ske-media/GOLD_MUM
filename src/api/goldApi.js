@@ -1,12 +1,19 @@
 import { API_BASE, API_KEY, TROY_OUNCE_TO_GRAMS } from '../config'
 
 async function request(path) {
-  const response = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      'x-access-token': API_KEY,
-      'Content-Type': 'application/json',
-    },
-  })
+  const url = `${API_BASE}${path}`
+
+  let response
+  try {
+    response = await fetch(url, {
+      headers: {
+        'x-access-token': API_KEY,
+        Accept: 'application/json',
+      },
+    })
+  } catch {
+    throw new Error('Impossible de joindre GoldAPI. Vérifiez votre connexion.')
+  }
 
   if (!response.ok) {
     let detail = ''
@@ -16,6 +23,19 @@ async function request(path) {
     } catch {
       /* ignore */
     }
+
+    if (response.status === 401) {
+      throw new Error('Clé API invalide ou manquante.')
+    }
+    if (response.status === 429) {
+      throw new Error('Limite de requêtes GoldAPI atteinte. Réessayez dans un instant.')
+    }
+    if (response.status === 404) {
+      throw new Error(
+        detail || 'Donnée introuvable (date hors marché ou endpoint invalide).',
+      )
+    }
+
     throw new Error(detail || `Erreur API (${response.status})`)
   }
 
