@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react'
+import Hint from './Hint'
+import InfoTip from './InfoTip'
 
 export default function FeesControl({
   mode,
@@ -21,8 +23,12 @@ export default function FeesControl({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
+        <p className="inline-flex items-center text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
           Frais estimés
+          <InfoTip label="frais estimés">
+            Dans un deal d’or, le spot n’est pas le prix final. On ajoute souvent
+            courtage (commission), premium (écart pièce/lingot) et stockage.
+          </InfoTip>
         </p>
         <div className="relative flex gap-1 rounded-full border border-line p-0.5">
           <span
@@ -53,10 +59,12 @@ export default function FeesControl({
         </div>
       </div>
 
-      <div
-        key={mode}
-        className="crossfade"
-      >
+      <Hint>
+        Ajustez pour coller à votre scénario : 1–3 % est fréquent chez un
+        revendeur ; un forfait pour un coffre.
+      </Hint>
+
+      <div key={mode} className="crossfade">
         {mode === 'percent' ? (
           <div className="space-y-3">
             <div className="flex items-baseline justify-between">
@@ -99,6 +107,7 @@ export default function FeesControl({
                 {currency}
               </span>
             </div>
+            <Hint>Ex. : frais de transaction ou de coffre annuels.</Hint>
           </div>
         )}
       </div>

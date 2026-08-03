@@ -1,5 +1,7 @@
 import { useRef } from 'react'
 import AnimatedMoney from './AnimatedMoney'
+import Hint from './Hint'
+import InfoTip from './InfoTip'
 import { formatPercent } from '../utils/format'
 import { Skeleton } from './Skeleton'
 
@@ -10,16 +12,22 @@ function Trend({ changePercent }) {
   const color = up ? 'text-sage' : 'text-brick'
 
   return (
-    <div className={`trend-pop flex items-center gap-2 ${color}`}>
-      <span className="trend-arrow text-sm tracking-wide" aria-hidden="true">
-        {up ? '↑' : '↓'}
-      </span>
-      <span className="font-display text-xl tracking-wide tabular-nums">
-        {formatPercent(changePercent)}
-      </span>
-      <span className="text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
-        aujourd&apos;hui
-      </span>
+    <div className="space-y-1.5">
+      <div className={`trend-pop flex items-center gap-2 ${color}`}>
+        <span className="trend-arrow text-sm tracking-wide" aria-hidden="true">
+          {up ? '↑' : '↓'}
+        </span>
+        <span className="font-display text-xl tracking-wide tabular-nums">
+          {formatPercent(changePercent)}
+        </span>
+        <span className="text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
+          aujourd&apos;hui
+        </span>
+        <InfoTip label="variation du jour">
+          Écart du cours spot par rapport à la clôture de la veille. Positif =
+          l’or a monté ; négatif = il a reculé.
+        </InfoTip>
+      </div>
     </div>
   )
 }
@@ -81,9 +89,15 @@ export default function PriceHero({ quote, loading, currency, refreshing }) {
       onPointerMove={onMove}
       onPointerLeave={onLeave}
     >
-      <p className="mb-3 text-[10px] uppercase tracking-[0.28em] text-ivory-faint">
-        Or fin · 24 carats
-      </p>
+      <div className="mb-3 flex items-center">
+        <p className="text-[10px] uppercase tracking-[0.28em] text-ivory-faint">
+          Or fin · 24 carats
+        </p>
+        <InfoTip label="or fin 24 carats">
+          Or d’investissement quasi pur (99,9 %). C’est la référence pour
+          valoriser lingots et pièces — pas l’or joaillier 18 carats.
+        </InfoTip>
+      </div>
 
       <div
         ref={tiltRef}
@@ -101,13 +115,18 @@ export default function PriceHero({ quote, loading, currency, refreshing }) {
         </span>
       </div>
 
+      <Hint className="mt-3 max-w-xs">
+        Prix spot : le cours mondial de référence pour 1 gramme d’or pur. Base
+        du marché, avant frais d’achat ou de revente.
+      </Hint>
+
       <div className="mt-4">
         <Trend changePercent={quote.changePercent} />
       </div>
 
       <div className="mt-10 grid grid-cols-2 gap-6 border-t border-line pt-8">
-        <div className="crossfade" style={{ animationDelay: '0.08s' }}>
-          <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
+        <div className="crossfade space-y-1.5" style={{ animationDelay: '0.08s' }}>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
             1 gramme
           </p>
           <p className="font-display text-2xl tracking-wide text-ivory">
@@ -116,9 +135,10 @@ export default function PriceHero({ quote, loading, currency, refreshing }) {
               currency={displayCurrency}
             />
           </p>
+          <Hint>Unité courante pour l’or physique.</Hint>
         </div>
-        <div className="crossfade" style={{ animationDelay: '0.16s' }}>
-          <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
+        <div className="crossfade space-y-1.5" style={{ animationDelay: '0.16s' }}>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
             1 kilogramme
           </p>
           <p className="font-display text-2xl tracking-wide text-gold-soft">
@@ -129,6 +149,7 @@ export default function PriceHero({ quote, loading, currency, refreshing }) {
               duration={1200}
             />
           </p>
+          <Hint>Référence lingot (1&nbsp;000&nbsp;g).</Hint>
         </div>
       </div>
     </section>

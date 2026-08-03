@@ -1,4 +1,6 @@
 import AnimatedMoney from './AnimatedMoney'
+import Hint from './Hint'
+import InfoTip from './InfoTip'
 import {
   formatDisplayDate,
   formatGrams,
@@ -8,20 +10,23 @@ import {
 import FeesControl from './FeesControl'
 import { Skeleton } from './Skeleton'
 
-function ResultRow({ label, value, accent = false, muted = false }) {
+function ResultRow({ label, value, hint, accent = false, muted = false }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 py-3">
-      <span className="text-[10px] uppercase tracking-[0.2em] text-ivory-faint">
-        {label}
-      </span>
-      <span
-        className={[
-          'font-display text-xl tracking-wide tabular-nums',
-          accent ? 'text-gold' : muted ? 'text-ivory-muted' : 'text-ivory',
-        ].join(' ')}
-      >
-        {value}
-      </span>
+    <div className="py-3">
+      <div className="flex items-baseline justify-between gap-4">
+        <span className="inline-flex items-center text-[10px] uppercase tracking-[0.2em] text-ivory-faint">
+          {label}
+          {hint && <InfoTip label={label}>{hint}</InfoTip>}
+        </span>
+        <span
+          className={[
+            'font-display text-xl tracking-wide tabular-nums',
+            accent ? 'text-gold' : muted ? 'text-ivory-muted' : 'text-ivory',
+          ].join(' ')}
+        >
+          {value}
+        </span>
+      </div>
     </div>
   )
 }
@@ -52,8 +57,8 @@ export default function Calculator({
           Calculateur de plus-value
         </h3>
         <p className="max-w-sm text-sm leading-relaxed text-ivory-muted">
-          Choisissez une date et une quantité. La plus-value se calcule
-          instantanément par rapport au cours actuel.
+          Simulez un achat passé au cours spot, puis mesurez le gain ou la
+          perte face au prix d’aujourd’hui — comme un deal d’or physique.
         </p>
       </header>
 
@@ -62,9 +67,13 @@ export default function Calculator({
           <div className="field-line space-y-2">
             <label
               htmlFor="purchase-date"
-              className="text-[10px] uppercase tracking-[0.22em] text-ivory-faint"
+              className="inline-flex items-center text-[10px] uppercase tracking-[0.22em] text-ivory-faint"
             >
               Date d&apos;achat
+              <InfoTip label="date d'achat">
+                Jour où vous auriez acheté. On récupère le cours spot historique
+                de cette date (hors week-ends / jours fériés de marché).
+              </InfoTip>
             </label>
             <input
               id="purchase-date"
@@ -74,14 +83,19 @@ export default function Calculator({
               onChange={(e) => onDateChange(e.target.value)}
               className="w-full border-b border-transparent bg-transparent py-2 font-display text-xl text-ivory outline-none"
             />
+            <Hint>Cours historique à cette date.</Hint>
           </div>
 
           <div className="field-line space-y-2">
             <label
               htmlFor="grams"
-              className="text-[10px] uppercase tracking-[0.22em] text-ivory-faint"
+              className="inline-flex items-center text-[10px] uppercase tracking-[0.22em] text-ivory-faint"
             >
               Quantité
+              <InfoTip label="quantité">
+                Poids d’or fin en grammes. Ex. : un lingot de 100 g, une pièce
+                d’environ 10 g, ou votre stock total.
+              </InfoTip>
             </label>
             <div className="relative">
               <input
@@ -97,6 +111,7 @@ export default function Calculator({
                 g
               </span>
             </div>
+            <Hint>Poids en or fin (grammes).</Hint>
           </div>
         </div>
 
@@ -139,6 +154,7 @@ export default function Calculator({
 
             <ResultRow
               label="Valeur à l'achat"
+              hint="Ce que valait votre quantité au cours spot du jour d’achat."
               value={
                 <AnimatedMoney
                   value={result.purchaseValue}
@@ -150,6 +166,7 @@ export default function Calculator({
             />
             <ResultRow
               label="Valeur actuelle"
+              hint="Ce que vaut la même quantité au cours spot d’aujourd’hui."
               value={
                 <AnimatedMoney
                   value={result.currentValue}
@@ -160,6 +177,7 @@ export default function Calculator({
             />
             <ResultRow
               label="Plus-value brute"
+              hint="Gain ou perte avant frais. C’est l’écart pur du marché."
               value={
                 <span>
                   <AnimatedMoney
@@ -178,6 +196,7 @@ export default function Calculator({
             {result.fees > 0 && (
               <ResultRow
                 label="Frais déduits"
+                hint="Courtage, premium ou stockage estimés que vous avez saisis — soustraits du gain."
                 value={
                   <AnimatedMoney
                     value={result.fees}
@@ -189,8 +208,12 @@ export default function Calculator({
               />
             )}
             <div className="net-glow pt-4">
-              <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
+              <p className="mb-1 inline-flex items-center text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
                 Plus-value nette
+                <InfoTip label="plus-value nette">
+                  Le vrai résultat du deal : plus-value brute moins vos frais.
+                  C’est l’ordre de grandeur après coûts réels.
+                </InfoTip>
               </p>
               <p
                 className={[
@@ -207,6 +230,10 @@ export default function Calculator({
               <p className="mt-1 text-sm text-ivory-muted">
                 {formatPercent(result.netPercent)}
               </p>
+              <Hint className="mt-2 max-w-xs">
+                Estimation indicative — le prix réel d’achat/revente peut
+                inclure un premium face au spot.
+              </Hint>
             </div>
           </div>
         )}

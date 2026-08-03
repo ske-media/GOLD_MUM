@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { fetchHistoricalPrice, fetchLivePrice } from './api/goldApi'
 import Calculator from './components/Calculator'
 import CurrencyToggle from './components/CurrencyToggle'
+import Glossary from './components/Glossary'
 import GoldDust from './components/GoldDust'
+import Hint from './components/Hint'
 import PriceHero from './components/PriceHero'
 import Reveal from './components/Reveal'
 import { usePointerGlow } from './hooks/usePointerGlow'
@@ -161,6 +163,9 @@ export default function App() {
             <p className="mt-3 max-w-[16rem] text-sm leading-relaxed text-ivory-muted">
               Le cours de l&apos;or, en grammes. Sans bruit.
             </p>
+            <Hint className="mt-2 max-w-[15rem]">
+              CHF ou EUR : devises pour lire le spot en Europe. Pas de dollar.
+            </Hint>
           </div>
           <CurrencyToggle currency={currency} onChange={setCurrency} />
         </header>
@@ -197,13 +202,22 @@ export default function App() {
               result={result}
             />
           </Reveal>
+
+          <div className="divider-glow w-full" aria-hidden="true" />
+
+          <Reveal delay={60}>
+            <Glossary />
+          </Reveal>
         </main>
 
-        <footer className="animate-fade-up-delay-3 mt-16 border-t border-line pt-6">
+        <footer className="animate-fade-up-delay-3 mt-16 border-t border-line pt-6 space-y-2">
           <p className="text-[10px] leading-relaxed tracking-[0.08em] text-ivory-faint">
             Prix spot 24 carats · unités métriques uniquement · CHF & EUR ·
             source GoldAPI.io
           </p>
+          <Hint>
+            Indication de marché uniquement — pas un conseil d’investissement.
+          </Hint>
         </footer>
       </div>
     </div>
