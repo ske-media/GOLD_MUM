@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #0b0b0a;
+  --color-ink-soft: #141412;
+  --color-ink-lift: #1c1c19;
+  --color-ivory: #f3efe6;
+  --color-ivory-muted: #b8b2a6;
+  --color-ivory-faint: #6e695f;
+  --color-gold: #c4a574;
+  --color-gold-soft: #a89068;
+  --color-gold-mist: rgba(196, 165, 116, 0.12);
+  --color-sage: #8fa88a;
+  --color-brick: #b07a6e;
+  --color-line: rgba(243, 239, 230, 0.08);
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100dvh;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.45;
+    cursor: pointer;
+    filter: invert(1);
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    opacity: 0.35;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-serif);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(243, 239, 230, 0.04) 0%,
+      rgba(196, 165, 116, 0.1) 50%,
+      rgba(243, 239, 230, 0.04) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+
+  .atmosphere {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(196, 165, 116, 0.09), transparent 55%),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(196, 165, 116, 0.04), transparent 50%),
+      var(--color-ink);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-up-delay-1 {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+.animate-fade-up-delay-2 {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+.animate-fade-up-delay-3 {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+
+.live-dot {
+  animation: soft-pulse 2.4s ease-in-out infinite;
+}
