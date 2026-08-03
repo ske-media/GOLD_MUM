@@ -1,9 +1,9 @@
-/** Courte explication sous un libellé — discrète, sans surcharge. */
+/** Courte explication sous un libellé — lisible, sans surcharge. */
 export default function Hint({ children, className = '' }) {
   return (
     <p
       className={[
-        'text-[11px] leading-relaxed text-ivory-faint/90',
+        'text-[13px] leading-relaxed text-ivory-muted',
         className,
       ]
         .filter(Boolean)

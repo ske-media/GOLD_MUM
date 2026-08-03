@@ -7,15 +7,15 @@
   --color-ink: #0b0b0a;
   --color-ink-soft: #141412;
   --color-ink-lift: #1c1c19;
-  --color-ivory: #f3efe6;
-  --color-ivory-muted: #b8b2a6;
-  --color-ivory-faint: #6e695f;
-  --color-gold: #c4a574;
-  --color-gold-soft: #a89068;
-  --color-gold-mist: rgba(196, 165, 116, 0.12);
-  --color-sage: #8fa88a;
-  --color-brick: #b07a6e;
-  --color-line: rgba(243, 239, 230, 0.08);
+  --color-ivory: #f7f3ea;
+  --color-ivory-muted: #c9c2b4;
+  --color-ivory-faint: #9a9284;
+  --color-gold: #d0b07e;
+  --color-gold-soft: #c4a574;
+  --color-gold-mist: rgba(208, 176, 126, 0.14);
+  --color-sage: #9bb896;
+  --color-brick: #c48b7e;
+  --color-line: rgba(243, 239, 230, 0.14);
 }
 
 @layer base {
@@ -33,14 +33,31 @@
     background: var(--color-ink);
     color: var(--color-ivory);
     font-family: var(--font-sans);
-    font-weight: 300;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.55;
     letter-spacing: 0.01em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   #root {
     min-height: 100dvh;
+  }
+
+  input,
+  button,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  input[type="date"],
+  input[type="number"] {
+    font-size: 1.125rem;
+    min-height: 2.75rem;
+    color: var(--color-ivory);
   }
 
   ::selection {
@@ -73,24 +90,24 @@
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     border-radius: 999px;
     background: var(--color-gold);
     box-shadow: 0 0 0 0 rgba(196, 165, 116, 0.35);
     transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
       box-shadow 0.25s ease;
-    margin-top: -5px;
+    margin-top: -7px;
   }
 
   input[type="range"]:hover::-webkit-slider-thumb,
   input[type="range"]:active::-webkit-slider-thumb {
-    transform: scale(1.25);
+    transform: scale(1.15);
     box-shadow: 0 0 18px 3px rgba(196, 165, 116, 0.4);
   }
 
   input[type="range"]::-webkit-slider-runnable-track {
-    height: 2px;
+    height: 4px;
     border-radius: 999px;
     background: linear-gradient(
       to right,
@@ -101,8 +118,8 @@
   }
 
   input[type="range"]::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     border: none;
     border-radius: 999px;
     background: var(--color-gold);
@@ -110,7 +127,7 @@
   }
 
   input[type="range"]::-moz-range-track {
-    height: 2px;
+    height: 4px;
     border-radius: 999px;
     background: var(--track);
   }

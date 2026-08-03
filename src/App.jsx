@@ -43,7 +43,7 @@ function computeResult({ historical, live, grams, feeMode, feePercent, feeFixed,
 function BrandTitle() {
   const letters = ['H', 'é', 'l', 'è', 'n', 'e']
   return (
-    <h1 className="font-display text-[2.35rem] font-medium leading-none tracking-[0.02em] text-ivory sm:text-5xl">
+    <h1 className="font-display text-[clamp(2.1rem,8vw,3rem)] font-medium leading-[1.05] tracking-[0.02em] text-ivory">
       <span className="brand-letters" aria-label="Hélène">
         {letters.map((letter, i) => (
           <span key={`${letter}-${i}`}>{letter}</span>
@@ -150,27 +150,29 @@ export default function App() {
       />
       <GoldDust />
 
-      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 pb-16 pt-6 sm:px-8 sm:pt-10">
-        <header className="animate-fade-up mb-12 flex items-start justify-between gap-4">
-          <div>
+      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-lg flex-col px-4 pb-[max(4rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] sm:px-8 sm:pt-10">
+        <header className="animate-fade-up mb-10 flex flex-col gap-5 sm:mb-12 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div className="min-w-0 flex-1">
             <div className="mb-3 flex items-center gap-2">
-              <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-gold" />
-              <span className="text-[10px] uppercase tracking-[0.28em] text-ivory-faint">
+              <span className="live-dot inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
+              <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-ivory-muted">
                 Temps réel
               </span>
             </div>
             <BrandTitle />
-            <p className="mt-3 max-w-[16rem] text-sm leading-relaxed text-ivory-muted">
+            <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-ivory-muted">
               Le cours de l&apos;or, en grammes. Sans bruit.
             </p>
-            <Hint className="mt-2 max-w-[15rem]">
+            <Hint className="mt-2 max-w-sm">
               CHF ou EUR : devises pour lire le spot en Europe. Pas de dollar.
             </Hint>
           </div>
-          <CurrencyToggle currency={currency} onChange={setCurrency} />
+          <div className="self-start sm:pt-1">
+            <CurrencyToggle currency={currency} onChange={setCurrency} />
+          </div>
         </header>
 
-        <main className="flex flex-1 flex-col gap-16">
+        <main className="flex flex-1 flex-col gap-12 sm:gap-16">
           {liveError ? (
             <p className="animate-fade-up text-sm text-brick">{liveError}</p>
           ) : (
@@ -210,8 +212,8 @@ export default function App() {
           </Reveal>
         </main>
 
-        <footer className="animate-fade-up-delay-3 mt-16 border-t border-line pt-6 space-y-2">
-          <p className="text-[10px] leading-relaxed tracking-[0.08em] text-ivory-faint">
+        <footer className="animate-fade-up-delay-3 mt-12 space-y-2 border-t border-line pt-6 sm:mt-16">
+          <p className="text-[12px] leading-relaxed tracking-[0.04em] text-ivory-muted">
             Prix spot 24 carats · unités métriques uniquement · CHF & EUR ·
             source GoldAPI.io
           </p>

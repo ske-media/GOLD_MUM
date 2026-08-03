@@ -3,7 +3,7 @@ export default function CurrencyToggle({ currency, onChange }) {
 
   return (
     <div
-      className="relative inline-flex items-center rounded-full border border-line bg-ink-soft/80 p-0.5 backdrop-blur-md shadow-[0_0_30px_-18px_rgba(196,165,116,0.55)]"
+      className="relative inline-flex shrink-0 items-center rounded-full border border-line bg-ink-soft/90 p-0.5 backdrop-blur-md shadow-[0_0_30px_-18px_rgba(196,165,116,0.55)]"
       role="group"
       aria-label="Devise"
     >
@@ -21,10 +21,10 @@ export default function CurrencyToggle({ currency, onChange }) {
             onClick={() => onChange(code)}
             aria-pressed={active}
             className={[
-              'relative z-10 min-w-[3.25rem] rounded-full px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em]',
+              'relative z-10 min-h-10 min-w-[3.5rem] rounded-full px-3.5 py-2 text-xs font-medium tracking-[0.14em]',
               active
                 ? 'text-gold'
-                : 'text-ivory-faint hover:text-ivory-muted',
+                : 'text-ivory-muted hover:text-ivory',
             ].join(' ')}
           >
             {code}

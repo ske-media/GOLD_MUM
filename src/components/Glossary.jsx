@@ -38,14 +38,14 @@ export default function Glossary() {
 
   return (
     <section className="space-y-5">
-      <header className="space-y-2">
-        <p className="text-[10px] uppercase tracking-[0.28em] text-gold-soft">
+      <header className="space-y-2.5">
+        <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-gold">
           Lexique
         </p>
-        <h3 className="font-display text-2xl font-medium tracking-wide text-ivory">
+        <h3 className="font-display text-[clamp(1.6rem,5.5vw,2rem)] font-medium leading-tight tracking-wide text-ivory">
           Comprendre le deal
         </h3>
-        <p className="max-w-sm text-sm leading-relaxed text-ivory-muted">
+        <p className="max-w-md text-[15px] leading-relaxed text-ivory-muted">
           Quelques notions pour lire le marché de l’or sans jargon opaque.
         </p>
       </header>
@@ -57,16 +57,16 @@ export default function Glossary() {
             <li key={item.term}>
               <button
                 type="button"
-                className="flex w-full items-baseline justify-between gap-4 py-3.5 text-left"
+                className="flex w-full min-h-12 items-center justify-between gap-4 py-3.5 text-left"
                 aria-expanded={open}
                 onClick={() => setOpenId(open ? null : index)}
               >
-                <span className="font-display text-lg tracking-wide text-ivory">
+                <span className="font-display text-[1.15rem] leading-snug tracking-wide text-ivory sm:text-xl">
                   {item.term}
                 </span>
                 <span
                   className={[
-                    'text-[10px] tracking-[0.18em] text-ivory-faint transition-transform duration-300',
+                    'shrink-0 text-sm tracking-[0.12em] text-ivory-muted transition-transform duration-300',
                     open ? 'rotate-45 text-gold' : '',
                   ].join(' ')}
                   aria-hidden="true"
@@ -81,7 +81,7 @@ export default function Glossary() {
                 ].join(' ')}
               >
                 <div className="overflow-hidden">
-                  <p className="pb-4 pr-6 text-[12px] leading-relaxed text-ivory-muted">
+                  <p className="pb-4 pr-2 text-[14px] leading-relaxed text-ivory-muted sm:pr-6">
                     {item.meaning}
                   </p>
                 </div>

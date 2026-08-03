@@ -12,15 +12,15 @@ import { Skeleton } from './Skeleton'
 
 function ResultRow({ label, value, hint, accent = false, muted = false }) {
   return (
-    <div className="py-3">
-      <div className="flex items-baseline justify-between gap-4">
-        <span className="inline-flex items-center text-[10px] uppercase tracking-[0.2em] text-ivory-faint">
+    <div className="py-3.5">
+      <div className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+        <span className="inline-flex items-center text-[11px] font-medium uppercase tracking-[0.14em] text-ivory-muted">
           {label}
           {hint && <InfoTip label={label}>{hint}</InfoTip>}
         </span>
         <span
           className={[
-            'font-display text-xl tracking-wide tabular-nums',
+            'font-display text-[1.35rem] leading-tight tracking-wide tabular-nums break-words sm:text-right sm:text-2xl',
             accent ? 'text-gold' : muted ? 'text-ivory-muted' : 'text-ivory',
           ].join(' ')}
         >
@@ -49,25 +49,25 @@ export default function Calculator({
 }) {
   return (
     <section className="space-y-8">
-      <header className="space-y-2">
-        <p className="text-[10px] uppercase tracking-[0.28em] text-gold-soft">
+      <header className="space-y-2.5">
+        <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-gold">
           Voyage dans le temps
         </p>
-        <h3 className="font-display text-3xl font-medium tracking-wide text-ivory">
+        <h3 className="font-display text-[clamp(1.75rem,6vw,2.15rem)] font-medium leading-tight tracking-wide text-ivory">
           Calculateur de plus-value
         </h3>
-        <p className="max-w-sm text-sm leading-relaxed text-ivory-muted">
+        <p className="max-w-md text-[15px] leading-relaxed text-ivory-muted">
           Simulez un achat passé au cours spot, puis mesurez le gain ou la
           perte face au prix d’aujourd’hui — comme un deal d’or physique.
         </p>
       </header>
 
-      <div className="soft-panel space-y-6 rounded-sm border border-line bg-ink-soft/40 p-5 sm:p-6">
-        <div className="grid gap-6 sm:grid-cols-2">
+      <div className="soft-panel space-y-6 rounded-sm border border-line bg-ink-soft/55 p-5 sm:p-6">
+        <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-6">
           <div className="field-line space-y-2">
             <label
               htmlFor="purchase-date"
-              className="inline-flex items-center text-[10px] uppercase tracking-[0.22em] text-ivory-faint"
+              className="inline-flex items-center text-[11px] font-medium uppercase tracking-[0.14em] text-ivory-muted"
             >
               Date d&apos;achat
               <InfoTip label="date d'achat">
@@ -81,7 +81,7 @@ export default function Calculator({
               max={todayISO()}
               value={date}
               onChange={(e) => onDateChange(e.target.value)}
-              className="w-full border-b border-transparent bg-transparent py-2 font-display text-xl text-ivory outline-none"
+              className="w-full min-w-0 border-b border-transparent bg-transparent py-2 font-display text-xl text-ivory outline-none"
             />
             <Hint>Cours historique à cette date.</Hint>
           </div>
@@ -89,7 +89,7 @@ export default function Calculator({
           <div className="field-line space-y-2">
             <label
               htmlFor="grams"
-              className="inline-flex items-center text-[10px] uppercase tracking-[0.22em] text-ivory-faint"
+              className="inline-flex items-center text-[11px] font-medium uppercase tracking-[0.14em] text-ivory-muted"
             >
               Quantité
               <InfoTip label="quantité">
@@ -101,13 +101,14 @@ export default function Calculator({
               <input
                 id="grams"
                 type="number"
+                inputMode="decimal"
                 min="0.1"
                 step="0.1"
                 value={grams}
                 onChange={(e) => onGramsChange(Number(e.target.value) || 0)}
-                className="w-full border-b border-transparent bg-transparent py-2 pr-10 font-display text-xl text-ivory outline-none"
+                className="w-full min-w-0 border-b border-transparent bg-transparent py-2 pr-10 font-display text-xl text-ivory outline-none"
               />
-              <span className="absolute right-0 top-1/2 -translate-y-1/2 text-xs tracking-[0.16em] text-ivory-faint">
+              <span className="absolute right-0 top-1/2 -translate-y-1/2 text-sm tracking-[0.12em] text-ivory-muted">
                 g
               </span>
             </div>
@@ -139,7 +140,7 @@ export default function Calculator({
         )}
 
         {!loading && error && (
-          <p className="crossfade text-sm leading-relaxed text-brick">{error}</p>
+          <p className="crossfade text-[15px] leading-relaxed text-brick">{error}</p>
         )}
 
         {!loading && !error && result && (
@@ -147,7 +148,7 @@ export default function Calculator({
             key={`${result.date}-${result.grams}-${currency}-${Math.round(result.netGain)}`}
             className="stagger-children space-y-1 divide-y divide-line"
           >
-            <p className="pb-4 text-xs text-ivory-muted">
+            <p className="pb-4 text-[14px] leading-relaxed text-ivory-muted">
               {formatGrams(result.grams)} g · acquis le{' '}
               {formatDisplayDate(result.date)}
             </p>
@@ -179,14 +180,13 @@ export default function Calculator({
               label="Plus-value brute"
               hint="Gain ou perte avant frais. C’est l’écart pur du marché."
               value={
-                <span>
+                <span className="inline-flex flex-wrap items-baseline gap-x-2">
                   <AnimatedMoney
                     value={result.grossGain}
                     currency={currency}
                     duration={850}
                   />
-                  <span className="text-ivory-muted">
-                    {' '}
+                  <span className="text-[0.95rem] text-ivory-muted">
                     ({formatPercent(result.grossPercent)})
                   </span>
                 </span>
@@ -207,8 +207,8 @@ export default function Calculator({
                 muted
               />
             )}
-            <div className="net-glow pt-4">
-              <p className="mb-1 inline-flex items-center text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
+            <div className="net-glow pt-5">
+              <p className="mb-2 inline-flex items-center text-[11px] font-medium uppercase tracking-[0.14em] text-ivory-muted">
                 Plus-value nette
                 <InfoTip label="plus-value nette">
                   Le vrai résultat du deal : plus-value brute moins vos frais.
@@ -217,7 +217,7 @@ export default function Calculator({
               </p>
               <p
                 className={[
-                  'font-display text-4xl tracking-wide',
+                  'font-display text-[clamp(2rem,8vw,2.75rem)] leading-tight tracking-wide break-words',
                   result.netGain >= 0 ? 'text-sage' : 'text-brick',
                 ].join(' ')}
               >
@@ -227,10 +227,10 @@ export default function Calculator({
                   duration={1000}
                 />
               </p>
-              <p className="mt-1 text-sm text-ivory-muted">
+              <p className="mt-1.5 text-[15px] text-ivory-muted">
                 {formatPercent(result.netPercent)}
               </p>
-              <Hint className="mt-2 max-w-xs">
+              <Hint className="mt-3 max-w-md">
                 Estimation indicative — le prix réel d’achat/revente peut
                 inclure un premium face au spot.
               </Hint>
