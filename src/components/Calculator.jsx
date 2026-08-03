@@ -1,4 +1,10 @@
-import { formatDisplayDate, formatGrams, formatMoney, formatPercent, todayISO } from '../utils/format'
+import AnimatedMoney from './AnimatedMoney'
+import {
+  formatDisplayDate,
+  formatGrams,
+  formatPercent,
+  todayISO,
+} from '../utils/format'
 import FeesControl from './FeesControl'
 import { Skeleton } from './Skeleton'
 
@@ -10,7 +16,7 @@ function ResultRow({ label, value, accent = false, muted = false }) {
       </span>
       <span
         className={[
-          'font-display text-xl tracking-wide',
+          'font-display text-xl tracking-wide tabular-nums',
           accent ? 'text-gold' : muted ? 'text-ivory-muted' : 'text-ivory',
         ].join(' ')}
       >
@@ -37,7 +43,7 @@ export default function Calculator({
   result,
 }) {
   return (
-    <section className="animate-fade-up-delay-2 space-y-8">
+    <section className="space-y-8">
       <header className="space-y-2">
         <p className="text-[10px] uppercase tracking-[0.28em] text-gold-soft">
           Voyage dans le temps
@@ -51,9 +57,9 @@ export default function Calculator({
         </p>
       </header>
 
-      <div className="space-y-6 rounded-sm border border-line bg-ink-soft/40 p-5 sm:p-6">
+      <div className="soft-panel space-y-6 rounded-sm border border-line bg-ink-soft/40 p-5 sm:p-6">
         <div className="grid gap-6 sm:grid-cols-2">
-          <div className="space-y-2">
+          <div className="field-line space-y-2">
             <label
               htmlFor="purchase-date"
               className="text-[10px] uppercase tracking-[0.22em] text-ivory-faint"
@@ -66,11 +72,11 @@ export default function Calculator({
               max={todayISO()}
               value={date}
               onChange={(e) => onDateChange(e.target.value)}
-              className="w-full border-b border-line bg-transparent py-2 font-display text-xl text-ivory outline-none transition-colors focus:border-gold/50"
+              className="w-full border-b border-transparent bg-transparent py-2 font-display text-xl text-ivory outline-none"
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="field-line space-y-2">
             <label
               htmlFor="grams"
               className="text-[10px] uppercase tracking-[0.22em] text-ivory-faint"
@@ -85,7 +91,7 @@ export default function Calculator({
                 step="0.1"
                 value={grams}
                 onChange={(e) => onGramsChange(Number(e.target.value) || 0)}
-                className="w-full border-b border-line bg-transparent py-2 pr-10 font-display text-xl text-ivory outline-none transition-colors focus:border-gold/50"
+                className="w-full border-b border-transparent bg-transparent py-2 pr-10 font-display text-xl text-ivory outline-none"
               />
               <span className="absolute right-0 top-1/2 -translate-y-1/2 text-xs tracking-[0.16em] text-ivory-faint">
                 g
@@ -109,7 +115,7 @@ export default function Calculator({
 
       <div className="min-h-[12rem]">
         {loading && (
-          <div className="space-y-4" aria-busy="true">
+          <div className="space-y-4 transition-opacity duration-300" aria-busy="true">
             <Skeleton className="h-3 w-40" />
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-8 w-3/4" />
@@ -118,11 +124,14 @@ export default function Calculator({
         )}
 
         {!loading && error && (
-          <p className="text-sm leading-relaxed text-brick">{error}</p>
+          <p className="crossfade text-sm leading-relaxed text-brick">{error}</p>
         )}
 
         {!loading && !error && result && (
-          <div className="animate-fade-up space-y-1 divide-y divide-line">
+          <div
+            key={`${result.date}-${result.grams}-${currency}-${Math.round(result.netGain)}`}
+            className="stagger-children space-y-1 divide-y divide-line"
+          >
             <p className="pb-4 text-xs text-ivory-muted">
               {formatGrams(result.grams)} g · acquis le{' '}
               {formatDisplayDate(result.date)}
@@ -130,26 +139,56 @@ export default function Calculator({
 
             <ResultRow
               label="Valeur à l'achat"
-              value={formatMoney(result.purchaseValue, currency)}
+              value={
+                <AnimatedMoney
+                  value={result.purchaseValue}
+                  currency={currency}
+                  duration={700}
+                />
+              }
               muted
             />
             <ResultRow
               label="Valeur actuelle"
-              value={formatMoney(result.currentValue, currency)}
+              value={
+                <AnimatedMoney
+                  value={result.currentValue}
+                  currency={currency}
+                  duration={800}
+                />
+              }
             />
             <ResultRow
               label="Plus-value brute"
-              value={`${formatMoney(result.grossGain, currency)}  (${formatPercent(result.grossPercent)})`}
+              value={
+                <span>
+                  <AnimatedMoney
+                    value={result.grossGain}
+                    currency={currency}
+                    duration={850}
+                  />
+                  <span className="text-ivory-muted">
+                    {' '}
+                    ({formatPercent(result.grossPercent)})
+                  </span>
+                </span>
+              }
               accent={result.grossGain >= 0}
             />
             {result.fees > 0 && (
               <ResultRow
                 label="Frais déduits"
-                value={formatMoney(result.fees, currency)}
+                value={
+                  <AnimatedMoney
+                    value={result.fees}
+                    currency={currency}
+                    duration={700}
+                  />
+                }
                 muted
               />
             )}
-            <div className="pt-4">
+            <div className="net-glow pt-4">
               <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
                 Plus-value nette
               </p>
@@ -159,7 +198,11 @@ export default function Calculator({
                   result.netGain >= 0 ? 'text-sage' : 'text-brick',
                 ].join(' ')}
               >
-                {formatMoney(result.netGain, currency)}
+                <AnimatedMoney
+                  value={result.netGain}
+                  currency={currency}
+                  duration={1000}
+                />
               </p>
               <p className="mt-1 text-sm text-ivory-muted">
                 {formatPercent(result.netPercent)}

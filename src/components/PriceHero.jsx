@@ -1,4 +1,6 @@
-import { formatMoney, formatPercent } from '../utils/format'
+import { useRef } from 'react'
+import AnimatedMoney from './AnimatedMoney'
+import { formatPercent } from '../utils/format'
 import { Skeleton } from './Skeleton'
 
 function Trend({ changePercent }) {
@@ -8,11 +10,11 @@ function Trend({ changePercent }) {
   const color = up ? 'text-sage' : 'text-brick'
 
   return (
-    <div className={`flex items-center gap-2 ${color}`}>
-      <span className="text-sm tracking-wide" aria-hidden="true">
+    <div className={`trend-pop flex items-center gap-2 ${color}`}>
+      <span className="trend-arrow text-sm tracking-wide" aria-hidden="true">
         {up ? '↑' : '↓'}
       </span>
-      <span className="font-display text-xl tracking-wide">
+      <span className="font-display text-xl tracking-wide tabular-nums">
         {formatPercent(changePercent)}
       </span>
       <span className="text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
@@ -22,8 +24,27 @@ function Trend({ changePercent }) {
   )
 }
 
-export default function PriceHero({ quote, loading, currency }) {
-  if (loading || !quote) {
+export default function PriceHero({ quote, loading, currency, refreshing }) {
+  const tiltRef = useRef(null)
+
+  const onMove = (e) => {
+    const node = tiltRef.current
+    if (!node || window.matchMedia('(pointer: coarse)').matches) return
+    const rect = node.getBoundingClientRect()
+    const px = (e.clientX - rect.left) / rect.width - 0.5
+    const py = (e.clientY - rect.top) / rect.height - 0.5
+    node.style.setProperty('--tilt-y', `${px * 4}deg`)
+    node.style.setProperty('--tilt-x', `${py * -3}deg`)
+  }
+
+  const onLeave = () => {
+    const node = tiltRef.current
+    if (!node) return
+    node.style.setProperty('--tilt-y', '0deg')
+    node.style.setProperty('--tilt-x', '0deg')
+  }
+
+  if (!quote) {
     return (
       <section className="animate-fade-up-delay-1 space-y-8" aria-busy="true">
         <div className="space-y-3">
@@ -45,15 +66,35 @@ export default function PriceHero({ quote, loading, currency }) {
     )
   }
 
+  const displayCurrency = quote.currency || currency
+  const isStale = quote.currency && quote.currency !== currency
+
   return (
-    <section className="animate-fade-up-delay-1">
+    <section
+      className={[
+        'price-reveal',
+        refreshing || isStale
+          ? 'opacity-55 transition-opacity duration-500'
+          : 'opacity-100 transition-opacity duration-500',
+      ].join(' ')}
+      aria-busy={loading || refreshing || isStale}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+    >
       <p className="mb-3 text-[10px] uppercase tracking-[0.28em] text-ivory-faint">
         Or fin · 24 carats
       </p>
 
-      <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
+      <div
+        ref={tiltRef}
+        className="price-halo tilt-price flex flex-wrap items-end gap-x-3 gap-y-1"
+      >
         <h2 className="font-display text-[4.25rem] leading-none tracking-tight text-ivory sm:text-[5rem]">
-          {formatMoney(quote.pricePerGram, currency)}
+          <AnimatedMoney
+            value={quote.pricePerGram}
+            currency={displayCurrency}
+            duration={1100}
+          />
         </h2>
         <span className="mb-2 text-sm tracking-[0.12em] text-ivory-muted">
           / g
@@ -65,20 +106,28 @@ export default function PriceHero({ quote, loading, currency }) {
       </div>
 
       <div className="mt-10 grid grid-cols-2 gap-6 border-t border-line pt-8">
-        <div>
+        <div className="crossfade" style={{ animationDelay: '0.08s' }}>
           <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
             1 gramme
           </p>
           <p className="font-display text-2xl tracking-wide text-ivory">
-            {formatMoney(quote.pricePerGram, currency)}
+            <AnimatedMoney
+              value={quote.pricePerGram}
+              currency={displayCurrency}
+            />
           </p>
         </div>
-        <div>
+        <div className="crossfade" style={{ animationDelay: '0.16s' }}>
           <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-ivory-faint">
             1 kilogramme
           </p>
           <p className="font-display text-2xl tracking-wide text-gold-soft">
-            {formatMoney(quote.pricePerKg, currency, { compact: true })}
+            <AnimatedMoney
+              value={quote.pricePerKg}
+              currency={displayCurrency}
+              compact
+              duration={1200}
+            />
           </p>
         </div>
       </div>

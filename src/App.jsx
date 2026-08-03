@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react'
 import { fetchHistoricalPrice, fetchLivePrice } from './api/goldApi'
 import Calculator from './components/Calculator'
 import CurrencyToggle from './components/CurrencyToggle'
+import GoldDust from './components/GoldDust'
 import PriceHero from './components/PriceHero'
+import Reveal from './components/Reveal'
+import { usePointerGlow } from './hooks/usePointerGlow'
 import { todayISO, yearsAgoISO } from './utils/format'
 
-function computeResult({ historical, live, grams, feeMode, feePercent, feeFixed, date }) {
+function computeResult({ historical, live, grams, feeMode, feePercent, feeFixed, date, currency }) {
   if (!historical || !live || !grams || grams <= 0) return null
+  if (historical.currency !== currency || live.currency !== currency) return null
 
   const purchaseValue = historical.pricePerGram * grams
   const currentValue = live.pricePerGram * grams
@@ -34,6 +38,20 @@ function computeResult({ historical, live, grams, feeMode, feePercent, feeFixed,
   }
 }
 
+function BrandTitle() {
+  const letters = ['H', 'é', 'l', 'è', 'n', 'e']
+  return (
+    <h1 className="font-display text-[2.35rem] font-medium leading-none tracking-[0.02em] text-ivory sm:text-5xl">
+      <span className="brand-letters" aria-label="Hélène">
+        {letters.map((letter, i) => (
+          <span key={`${letter}-${i}`}>{letter}</span>
+        ))}
+      </span>{' '}
+      <span className="gold-shimmer">Gold</span>
+    </h1>
+  )
+}
+
 export default function App() {
   const [currency, setCurrency] = useState('CHF')
   const [quote, setQuote] = useState(null)
@@ -49,6 +67,8 @@ export default function App() {
   const [historical, setHistorical] = useState(null)
   const [calcLoading, setCalcLoading] = useState(false)
   const [calcError, setCalcError] = useState(null)
+
+  const glow = usePointerGlow(true)
 
   useEffect(() => {
     let cancelled = false
@@ -114,11 +134,21 @@ export default function App() {
     feePercent,
     feeFixed,
     date,
+    currency,
   })
 
   return (
     <div className="atmosphere min-h-dvh">
-      <div className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 pb-16 pt-6 sm:px-8 sm:pt-10">
+      <div
+        className={`pointer-glow ${glow.active ? 'is-active' : ''}`}
+        style={{
+          '--glow-x': `${glow.x}%`,
+          '--glow-y': `${glow.y}%`,
+        }}
+      />
+      <GoldDust />
+
+      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-lg flex-col px-5 pb-16 pt-6 sm:px-8 sm:pt-10">
         <header className="animate-fade-up mb-12 flex items-start justify-between gap-4">
           <div>
             <div className="mb-3 flex items-center gap-2">
@@ -127,9 +157,7 @@ export default function App() {
                 Temps réel
               </span>
             </div>
-            <h1 className="font-display text-[2.35rem] font-medium leading-none tracking-[0.02em] text-ivory sm:text-5xl">
-              Hélène <span className="text-gold">Gold</span>
-            </h1>
+            <BrandTitle />
             <p className="mt-3 max-w-[16rem] text-sm leading-relaxed text-ivory-muted">
               Le cours de l&apos;or, en grammes. Sans bruit.
             </p>
@@ -141,27 +169,34 @@ export default function App() {
           {liveError ? (
             <p className="animate-fade-up text-sm text-brick">{liveError}</p>
           ) : (
-            <PriceHero quote={quote} loading={liveLoading} currency={currency} />
+            <PriceHero
+              quote={quote}
+              loading={liveLoading && !quote}
+              refreshing={liveLoading && !!quote}
+              currency={currency}
+            />
           )}
 
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/25 to-transparent" />
+          <div className="divider-glow w-full" aria-hidden="true" />
 
-          <Calculator
-            currency={currency}
-            date={date}
-            onDateChange={setDate}
-            grams={grams}
-            onGramsChange={setGrams}
-            feeMode={feeMode}
-            onFeeModeChange={setFeeMode}
-            feePercent={feePercent}
-            onFeePercentChange={setFeePercent}
-            feeFixed={feeFixed}
-            onFeeFixedChange={setFeeFixed}
-            loading={calcLoading || liveLoading}
-            error={calcError}
-            result={result}
-          />
+          <Reveal variant="scale" delay={40}>
+            <Calculator
+              currency={currency}
+              date={date}
+              onDateChange={setDate}
+              grams={grams}
+              onGramsChange={setGrams}
+              feeMode={feeMode}
+              onFeeModeChange={setFeeMode}
+              feePercent={feePercent}
+              onFeePercentChange={setFeePercent}
+              feeFixed={feeFixed}
+              onFeeFixedChange={setFeeFixed}
+              loading={calcLoading || (liveLoading && !quote)}
+              error={calcError}
+              result={result}
+            />
+          </Reveal>
         </main>
 
         <footer className="animate-fade-up-delay-3 mt-16 border-t border-line pt-6">
